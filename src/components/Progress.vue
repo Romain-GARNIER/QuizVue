@@ -1,13 +1,16 @@
 <template>
     <div class="d-flex p-2">
-        <progress max="100" :value=progressValue></progress><span class="progress-value">{{ progressValue }}%</span>
+        Question {{ step + 1 }} / {{ max }}
+        <progress :max="max" :value=step></progress><span class="progress-value"></span>
     </div>
 </template>
 
 <script setup>
+import { computed } from 'vue'
 
 defineProps({
-    progressValue: Number
+    step: Number,
+    max : Number
 })
 
 </script>

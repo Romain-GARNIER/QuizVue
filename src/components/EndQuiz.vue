@@ -1,16 +1,19 @@
 <template>
-    <div v-if="correctAnswerCount >= countQuestion">
-        <p>Bravo !</p>
+    <p>Votre score est de {{  score }} / {{ max }}</p>
+    <div v-if="score >= minimumScore">
+        <p>{{successMessage}} !</p>
     </div>
     <div v-else>
-        <p>Dommage</p>
+        <p>{{failureMessage}}</p>
     </div>
-    <p>Votre score est de {{  correctAnswerCount }} / {{ countQuestion }}</p>
 </template>
 
 <script setup>
 defineProps({
-    correctAnswerCount : Number,
-    countQuestion : Number
+    score : Number,
+    max : Number,
+    minimumScore : Number,
+    successMessage : String,
+    failureMessage : String
 })
 </script>

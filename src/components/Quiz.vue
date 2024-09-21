@@ -1,27 +1,22 @@
-<script setup lang="ts">
+<script setup>
 import { ref, computed } from 'vue'
-import { GetSettings } from '../services/settingsService';
-import ProgressBar from './ProgressBar.vue';
+import Progress from './Progress.vue';
 import Question from './Question.vue';
 import EndQuiz from './EndQuiz.vue';
 
-const settings = GetSettings()
-
-const title = ref(settings.title);
+const props = defineProps({
+  settings : Object
+})
 
 let currentQuestionIndex = ref(0)
 
-const progressValue = computed(() => {
-  return currentQuestionIndex.value / settings.questions.length * 100
-});
-
 const currentQuestion = computed(() => {
-  return settings.questions[currentQuestionIndex.value];
+  return props.settings.questions[currentQuestionIndex.value];
 });
 
 const correctAnswerCount = ref(0);
 
-function validAnswer(selectedResponse: string) {
+function validAnswer(selectedResponse) {
   if (selectedResponse === currentQuestion.value.correct_answer) {
     correctAnswerCount.value++;
   }
@@ -30,21 +25,23 @@ function validAnswer(selectedResponse: string) {
 </script>
 
 <template>
-  <div class="">
     <div>
-      <h1>{{ title }}</h1>
+      <h1>{{ settings.title }}</h1>
     </div>
 
     <div v-if="currentQuestionIndex < settings.questions.length">
-      <ProgressBar :progress-value="progressValue"></ProgressBar>
-      <div>
-        <Question :question="currentQuestion" @submit="validAnswer" />
-      </div>
+      <Progress :step="currentQuestionIndex" :max="settings.questions.length"></Progress>
+      <Question :key="currentQuestion.question" :question="currentQuestion" @submit="validAnswer" />
     </div>
     <div v-else>
-      <EndQuiz :correctAnswerCount="correctAnswerCount" :countQuestion="settings.questions.length"></EndQuiz>
+      <EndQuiz 
+        :score="correctAnswerCount"
+        :max="settings.questions.length"
+        :minimumScore="settings.minimum_score"
+        :successMessage="settings.success_message"
+        :failureMessage="settings.failure_message"
+       ></EndQuiz>
     </div>
-  </div>
 </template>
 
 <style scoped></style>
