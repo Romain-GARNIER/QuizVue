@@ -1,9 +1,13 @@
 <template>
   <div class="question">
     <h3>{{ question.question }}</h3>
-      <label v-for="choice in question.choices">
-        <input type="radio" v-model="selectedResponse" :value="choice" nmae="answer">
-        {{ choice }}
+      <label v-for="choice in randomChoices">
+        <Choice
+         :disabled="hasAnswer" 
+         :value="choice"
+         v-model="selectedResponse"
+         :correctAnswer="question.correct_answer"
+        />
       </label>
     <button :disabled="!hasAnswer" @click="Submit()">Question suivante</button>
   </div>
@@ -11,13 +15,16 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { shuffleArray } from '../functions/array'
+import Choice from './Choice.vue'
 
-defineProps({
+const props = defineProps({
   question: {}
 })
 
 let selectedResponse = ref(null)
 const hasAnswer = computed(() => selectedResponse.value !== null)
+const randomChoices = computed(() => shuffleArray(props.question.choices))
 
 const emits = defineEmits(['submit'])
 
